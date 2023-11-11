@@ -4,11 +4,31 @@ import { nanoid } from 'nanoid';
 import { Filter } from './filter/filter';
 import { ContactList } from './contacklist/contactList';
 
+const KeyLocalContact = '';
+
 class Phonebooks extends Component {
   state = {
     contacts: [],
     filter: '',
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.contacts !== this.state.contacts) {
+      localStorage.setItem(
+        KeyLocalContact,
+        JSON.stringify(this.state.contacts)
+      );
+    }
+  }
+
+  componentDidMount() {
+    const savedContact = localStorage.getItem(KeyLocalContact);
+    if (savedContact !== null) {
+      this.setState({
+        contacts: JSON.parse(savedContact),
+      });
+    }
+  }
 
   addContact = newContact => {
     const { contacts } = this.state;
@@ -29,22 +49,22 @@ class Phonebooks extends Component {
 
   filterByName = newTopic => {
     // function  for the test
-    const forTest = [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ];
+    // const forTest = [
+    //   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+    //   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+    //   { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+    //   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+    // ];
 
-    this.setState({
-      contacts: forTest,
-      filter: newTopic,
-    });
+    // this.setState({
+    //   contacts: forTest,
+    //   filter: newTopic,
+    // });
 
     // real function, that works with inputed data
-    // this.setState(prevState => {
-    //   return { contacts: prevState.contacts, filter: newTopic };
-    // });
+    this.setState(prevState => {
+      return { contacts: prevState.contacts, filter: newTopic };
+    });
   };
 
   deleteContact = nameId => {
